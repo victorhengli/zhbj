@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/title_red_bg"
+            >
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/content_title"
+                  android:text="智慧北京"
+                  android:layout_centerInParent="true"
+                  android:textSize="20dp"
+                  android:textColor="#fff"
+                />
+        <ImageButton android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:id="@+id/content_button"
+                     android:background="@null"
+                     android:src="@drawable/img_menu"
+                     android:padding="10dp"
+                     android:layout_centerVertical="true"
+                />
+    </RelativeLayout>
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:id="@+id/content_frame"
+            >
+
+    </FrameLayout>
+</LinearLayout>

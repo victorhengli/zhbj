@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <com.xxk.zhbj.viewpager.CustomNoScollViewPager
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/content_viewPager"
+            />
+    <RadioGroup android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/content_raidoGroup"
+                android:orientation="horizontal"
+                android:background="@drawable/bottom_tab_bg"
+            >
+        <RadioButton style="@style/content_bottom_radio_button"
+                     android:id="@+id/home"
+                     android:text="首页"
+                     android:drawableTop="@drawable/content_radiobutton_sy_select"
+                />
+        <RadioButton style="@style/content_bottom_radio_button"
+                     android:id="@+id/news"
+                     android:text="新闻中心"
+                     android:drawableTop="@drawable/content_radiobutton_news_select"
+                />
+        <RadioButton style="@style/content_bottom_radio_button"
+                     android:id="@+id/smartService"
+                     android:text="智慧服务"
+                     android:drawableTop="@drawable/content_radiobutton_zh_select"
+                />
+        <RadioButton style="@style/content_bottom_radio_button"
+                     android:id="@+id/gov"
+                     android:text="政务"
+                     android:drawableTop="@drawable/content_radiobutton_zw_select"
+                />
+        <RadioButton style="@style/content_bottom_radio_button"
+                     android:id="@+id/setting"
+                     android:text="设置"
+                     android:drawableTop="@drawable/content_radiobutton_sz_select"
+                />
+    </RadioGroup>
+</LinearLayout>
