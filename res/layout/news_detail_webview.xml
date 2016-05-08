@@ -7,36 +7,39 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/title_red_bg"
             >
-        <TextView android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:id="@+id/content_title"
-                  android:text="智慧北京"
-                  android:layout_centerInParent="true"
-                  android:textSize="20dp"
-                  android:textColor="#fff"
-                />
         <ImageButton android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
-                     android:id="@+id/content_button"
+                     android:id="@+id/ib_news_detail_back"
                      android:background="@null"
-                     android:src="@drawable/img_menu"
+                     android:src="@drawable/back"
+                     android:layout_alignParentLeft="true"
                      android:padding="10dp"
                      android:layout_centerVertical="true"
                 />
         <ImageButton android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
+                     android:id="@+id/ib_news_detail_share"
+                     android:background="@null"
+                     android:src="@drawable/icon_share"
                      android:layout_alignParentRight="true"
-                     android:id="@+id/photo_button"
+                     android:padding="10dp"
+                     android:layout_marginRight="10dp"
+                     android:layout_centerVertical="true"
+                />
+        <ImageButton android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:id="@+id/ib_news_detail_textsize"
                      android:background="@null"
-                     android:visibility="gone"
-                     android:src="@drawable/icon_pic_list_type"
+                     android:src="@drawable/icon_textsize"
+                     android:layout_toLeftOf="@id/ib_news_detail_share"
                      android:padding="10dp"
                      android:layout_centerVertical="true"
                 />
+
     </RelativeLayout>
-    <FrameLayout android:layout_width="match_parent"
+    <WebView android:layout_width="match_parent"
                  android:layout_height="match_parent"
-                 android:id="@+id/content_frame"
+                 android:id="@+id/news_detail_webview"
             >
-    </FrameLayout>
+    </WebView>
 </LinearLayout>
