@@ -19,6 +19,7 @@ import com.xxk.zhbj.MainActivity;
 import com.xxk.zhbj.base.BasePager;
 import com.xxk.zhbj.global.GlobalContants;
 import com.xxk.zhbj.model.CategoryModel;
+import com.xxk.zhbj.util.CacheUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -49,7 +50,13 @@ public class NewsCenterPager extends BasePager {
         tv.setText("新闻中心");
         mFrameLayout.addView(tv);*/
         setSlidingMenuMode(true);
-        getData();
+        String result = CacheUtils.getCache(getActivity(),GlobalContants.SERVER_ADDRESS);//先从缓存中获取
+        System.out.println("sharePreference:"+result);
+        if(result == null || "".equals(result)){
+            getData();
+        }else{
+            parseData(result);
+        }
     }
 
     private void getData() {
@@ -58,24 +65,8 @@ public class NewsCenterPager extends BasePager {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 String result = responseInfo.result;
-                Gson gson = new Gson();
-                CategoryModel model = gson.fromJson(result, CategoryModel.class);
-                //将获取到的数据传递给leftMenuFragment用于初始化数据
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.getLeftMenuFragment().setLeftMenuData(model);
-
-                //添加侧边栏选项对应的内容
-                //通过构造方法将数据传给侧边栏新闻选项对应的内容
-                baseDetailContents.add(new NewsDetailContent(getActivity(),model.data.get(0).children));
-                baseDetailContents.add(new TopicDetailContent(getActivity()));
-                baseDetailContents.add(new PhotoDetailContent(getActivity()));
-                baseDetailContents.add(new InteractDetailContent(getActivity()));
-
-                //默认设置侧边栏第一个选项对应的标题
-                mTextView.setText(model.data.get(0).title);
-                //默认显示侧边栏第一个选项对应的内容
-                setContentView(0);
-
+                CacheUtils.setCache(getActivity(),GlobalContants.SERVER_ADDRESS,result);
+                parseData(result);
             }
 
             @Override
@@ -87,12 +78,37 @@ public class NewsCenterPager extends BasePager {
         });
     }
 
+    private void parseData(String result){
+        Gson gson = new Gson();
+        CategoryModel model = gson.fromJson(result, CategoryModel.class);
+        //将获取到的数据传递给leftMenuFragment用于初始化数据
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.getLeftMenuFragment().setLeftMenuData(model);
+
+        //添加侧边栏选项对应的内容
+        //通过构造方法将数据传给侧边栏新闻选项对应的内容
+        baseDetailContents.add(new NewsDetailContent(getActivity(),model.data.get(0).children));
+        baseDetailContents.add(new TopicDetailContent(getActivity()));
+        baseDetailContents.add(new PhotoDetailContent(getActivity(),mPhotoButton));
+        baseDetailContents.add(new InteractDetailContent(getActivity()));
+
+        //默认设置侧边栏第一个选项对应的标题
+        mTextView.setText(model.data.get(0).title);
+        //默认显示侧边栏第一个选项对应的内容
+        setContentView(0);
+    }
+
     /**
      * 该方法为侧边栏点击事件暴露的，点击对应的侧边栏时，更改对应的内容
      * @param position
      */
     public void setContentView(int position){
         BaseDetailContent baseDetailContent = baseDetailContents.get(position);
+        if(baseDetailContent instanceof PhotoDetailContent){//如果该content是侧边栏选项组图的内容，则将标题栏右上角的图标显示，否则隐藏
+            mPhotoButton.setVisibility(View.VISIBLE);
+        }else{
+            mPhotoButton.setVisibility(View.GONE);
+        }
         mFrameLayout.removeAllViews();
         mFrameLayout.addView(baseDetailContent.mContentView);
         baseDetailContent.initData();

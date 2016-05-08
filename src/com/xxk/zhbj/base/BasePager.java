@@ -26,6 +26,7 @@ public class BasePager {
     public FrameLayout mFrameLayout;
     //@ViewInject(R.id.content_frame)
     public ImageButton mImageButton;
+    public ImageButton mPhotoButton;//组图模块下的按钮，用于单列和两列的切换
 
     public BasePager(Activity activity){
         this.mActivity = activity;
@@ -36,6 +37,7 @@ public class BasePager {
         mContentView = View.inflate(mActivity, R.layout.content_layout,null);
         mTextView = (TextView) mContentView.findViewById(R.id.content_title);
         mImageButton = (ImageButton) mContentView.findViewById(R.id.content_button);
+        mPhotoButton = (ImageButton) mContentView.findViewById(R.id.photo_button);
         mImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,7 +45,6 @@ public class BasePager {
             }
         });
         mFrameLayout = (FrameLayout) mContentView.findViewById(R.id.content_frame);
-        //ViewUtils.inject(this, mContentView);
     }
 
     public void setSlidingMenuToggle(){

@@ -7,8 +7,10 @@ package com.xxk.zhbj.global;
 public class GlobalContants {
 
     //public final static String IP = "http://10.0.2.2:8088/zhbj";
-    public final static String IP = "http://192.168.1.104:8088/zhbj";
+    public final static String IP = "http://192.168.1.157:8088/zhbj";
 
     public final static String SERVER_ADDRESS = IP +"/categories.json";
+
+    public final static String NEWSPHOTO_ADDRESS = IP+"/photos/photos_1.json";
 
 }

@@ -6,11 +6,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.*;
 import com.xxk.zhbj.R;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 自定义下拉刷新，上拉加载更多
@@ -33,6 +33,8 @@ public class RefreshListView extends ListView {
     private TextView date;
     private RotateAnimation upAnim;
     private RotateAnimation downAnim;
+    private View mFooterView;
+    private int mFooterHeight;
 
     public RefreshListView(Context context) {
         super(context);
@@ -50,6 +52,14 @@ public class RefreshListView extends ListView {
     }
 
     private void initView(){
+        initHeaderView();
+        initFooterView();
+    }
+
+    /**
+     * 初始化listview头布局
+     */
+    private void initHeaderView(){
         mHeadView = View.inflate(getContext(), R.layout.news_detail_listview_pull_item,null);
         addHeaderView(mHeadView);
         imageView = (ImageView) mHeadView.findViewById(R.id.iv_pull);
@@ -61,6 +71,38 @@ public class RefreshListView extends ListView {
         headHeight = mHeadView.getMeasuredHeight();
         mHeadView.setPadding(0, -headHeight, 0, 0);
         initAnim();
+    }
+
+    boolean isLodingMore = false;//是否正在加载标识，防止重复加载数据
+    private void initFooterView(){
+        mFooterView = View.inflate(getContext(),R.layout.news_detail_listview_push_item,null);
+        addFooterView(mFooterView);
+        mFooterView.measure(0,0);
+        mFooterHeight = mFooterView.getMeasuredHeight();
+        mFooterView.setPadding(0,-mFooterHeight,0,0);
+        //为listview设置滑动监听事件
+        this.setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                //如果listview处于滑动暂停状态或者快速滑动状态时，进行捕获
+                if (scrollState == SCROLL_STATE_IDLE || scrollState == SCROLL_STATE_FLING) {
+                    if (getLastVisiblePosition() == getCount() - 1 && !isLodingMore) { //如果是显示最后一条数据
+                        System.out.println("到底了");
+                        mFooterView.setPadding(0, 0, 0, 0);
+                        setSelection(getCount());//使加载更多能够显示出来
+                        isLodingMore = true;
+                        if(listener != null){
+                            listener.pushToRefresh();//调用监听的抽象方法，让调用者实现
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
     }
 
     /**
@@ -137,6 +179,9 @@ public class RefreshListView extends ListView {
                 imageView.setVisibility(View.INVISIBLE);
                 pb.setVisibility(View.VISIBLE);
                 pullTextView.setText("正在刷新....");
+                if(listener != null){
+                    listener.pullToRefresh();
+                }
                 break;
         }
     }
@@ -152,4 +197,48 @@ public class RefreshListView extends ListView {
         downAnim.setFillAfter(true);
     }
 
+    /**
+     * 自定义下拉，上拉刷新，让外部去实现
+     */
+    OnRefreshListener listener;
+
+    public interface OnRefreshListener{
+        public void pullToRefresh();
+        public void pushToRefresh();
+    }
+
+    public void setOnRefreshListener(OnRefreshListener listener){
+        this.listener = listener;
+    }
+
+    /**
+     * 将下拉刷新头布局收起
+     */
+    public void onRefreshComplete(){
+        if(isLodingMore){//将脚布局收起
+            isLodingMore = false;
+            mFooterView.setPadding(0,-mFooterHeight,0,0);
+        }else{
+            imageView.setVisibility(View.VISIBLE);
+            pb.setVisibility(View.INVISIBLE);
+            pullTextView.setText("下拉刷新");
+            mHeadView.setPadding(0, -headHeight, 0, 0);
+            date.setText("最后刷新时间"+getCurrent());
+        }
+    }
+
+    private String getCurrent(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(new Date());
+    }
+
+    @Override
+    public void setOnItemClickListener(final OnItemClickListener listener) {
+        super.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                listener.onItemClick(parent,view,position - getHeaderViewsCount(),id);
+            }
+        });
+    }
 }
